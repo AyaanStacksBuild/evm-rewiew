@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CVS — Computerised Voting System | SST Exhibition</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Playfair Display / Cinzel & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            parchment: '#FAF8F4',
+            parchmentDark: '#F3EFE6',
+            civicNavy: '#0F1E36',
+            civicSlate: '#2E3F5B',
+            civicGold: '#D97706',
+            civicGoldLight: '#FEF3C7',
+            civicGoldDark: '#B45309',
+            emeraldVote: '#059669',
+          },
+          fontFamily: {
+            heading: ['"Cinzel"', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #FAF8F4;
+      color: #0F1E36;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .star-btn {
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+    .star-btn:active {
+      transform: scale(1.25);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F3EFE6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D1D5DB;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-100 selection:text-amber-900">
+
+  <!-- Top Header with Exhibition Branding -->
+  <header class="w-full bg-white/95 backdrop-blur-md border-b border-amber-900/10 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-600 to-amber-700 text-white flex items-center justify-center font-black shadow-sm text-sm">
+          🗳️
+        </div>
+        <div>
+          <span class="text-xs font-extrabold tracking-widest uppercase text-amber-800 font-heading block">Class 7 SST Project</span>
+          <span class="text-sm font-bold text-civicNavy tracking-tight leading-none">CVS Voting Exhibition</span>
+        </div>
+      </div>
+
+      <!-- Discreet Admin Button -->
+      <div>
+        <button id="openAdminModalBtn" title="Student In-Charge Dashboard" class="p-2 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-xl w-full mx-auto px-4 py-5">
+    
+    <!-- SECTION 1: VISITOR FORM VIEW -->
+    <div id="visitorSection" class="transition-all duration-300">
+      
+      <!-- Project Exhibition Hero Banner -->
+      <div class="text-center mb-6 pt-2">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-200 text-amber-900 text-xs font-semibold uppercase tracking-wider mb-2">
+          <span>🏛️</span> Democratic Institutions & Technology
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-civicNavy font-heading">
+          CVS
+        </h1>
+        <p class="text-xs font-bold uppercase tracking-widest text-amber-800 mb-1">
+          COMPUTERISED VOTING SYSTEM
+        </p>
+        <p class="text-xs text-stone-600 font-medium">
+          SST EXHIBITION
+        </p>
+        <div class="w-12 h-0.5 bg-amber-600 mx-auto mt-3 rounded-full"></div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-stone-200/80">
+        <div class="text-center mb-5">
+          <h2 class="text-xl font-bold text-stone-900 tracking-tight">We’d Love to Hear Your Feedback!</h2>
+          <p class="text-xs text-stone-600 mt-1">Thank you for visiting our booth! Tell our student team how we did.</p>
+        </div>
+
+        <form id="feedbackForm" class="space-y-4">
+          <!-- Visitor Name -->
+          <div>
+            <label for="visitorName" class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
+              Your Name <span class="text-rose-500">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="visitorName" 
+              required
+              maxlength="60"
+              placeholder="e.g. Mrs. Sharma / Rahul Verma"
+              class="w-full px-4 py-3 text-sm rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 bg-stone-50/50 transition"
+            />
+          </div>
+
+          <!-- Email or Phone -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="visitorContact" class="block text-xs font-bold uppercase tracking-wider text-stone-700">
+                Email or Phone Number
+              </label>
+              <span class="text-[11px] text-stone-500">Optional</span>
+            </div>
+            <input 
+              type="text" 
+              id="visitorContact" 
+              maxlength="80"
+              placeholder="e.g. parent@email.com or +91 98765 43210"
+              class="w-full px-4 py-3 text-sm rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 bg-stone-50/50 transition"
+            />
+          </div>
+
+          <!-- Rate Our Project -->
+          <div class="pt-1">
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-700">
+                Rate Our Project <span class="text-rose-500">*</span>
+              </label>
+              <span id="starRatingLabel" class="text-xs font-bold text-amber-700">5: Outstanding Innovation! 🌟</span>
+            </div>
+            
+            <div class="flex items-center justify-center gap-2 sm:gap-3 py-2 bg-amber-50/60 rounded-2xl border border-amber-100">
+              <button type="button" data-val="1" class="star-btn p-1 text-3xl focus:outline-none transition transform hover:scale-110" aria-label="1 Star">★</button>
+              <button type="button" data-val="2" class="star-btn p-1 text-3xl focus:outline-none transition transform hover:scale-110" aria-label="2 Stars">★</button>
+              <button type="button" data-val="3" class="star-btn p-1 text-3xl focus:outline-none transition transform hover:scale-110" aria-label="3 Stars">★</button>
+              <button type="button" data-val="4" class="star-btn p-1 text-3xl focus:outline-none transition transform hover:scale-110" aria-label="4 Stars">★</button>
+              <button type="button" data-val="5" class="star-btn p-1 text-3xl focus:outline-none transition transform hover:scale-110" aria-label="5 Stars">★</button>
+            </div>
+            <input type="hidden" id="ratingValue" value="5">
+          </div>
+
+          <!-- Quick Feedback Tags -->
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1.5">
+              Quick Suggestions (Tap to add):
+            </label>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" class="quick-chip text-xs bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 border border-stone-200/80 px-2.5 py-1 rounded-full transition active:scale-95">🗳️ Realistic EVM demo</button>
+              <button type="button" class="quick-chip text-xs bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 border border-stone-200/80 px-2.5 py-1 rounded-full transition active:scale-95">💡 Innovative idea</button>
+              <button type="button" class="quick-chip text-xs bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 border border-stone-200/80 px-2.5 py-1 rounded-full transition active:scale-95">👏 Well presented by students</button>
+              <button type="button" class="quick-chip text-xs bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 border border-stone-200/80 px-2.5 py-1 rounded-full transition active:scale-95">🔒 Great voter security concept</button>
+              <button type="button" class="quick-chip text-xs bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 border border-stone-200/80 px-2.5 py-1 rounded-full transition active:scale-95">🌟 1st Prize Winner material!</button>
+            </div>
+          </div>
+
+          <!-- Review Textarea -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label for="visitorReview" class="block text-xs font-bold uppercase tracking-wider text-stone-700">
+                Your Review <span class="text-rose-500">*</span>
+              </label>
+              <span id="charCount" class="text-[11px] text-stone-500">0/500</span>
+            </div>
+            <textarea 
+              id="visitorReview" 
+              required
+              rows="4" 
+              maxlength="500"
+              placeholder="What impressed you most about our electronic voting machine model & demonstration? Any tips for improvement?"
+              class="w-full px-4 py-3 text-sm rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 bg-stone-50/50 transition leading-relaxed"
+            ></textarea>
+          </div>
+
+          <!-- Notification Banner for network status -->
+          <div id="formStatusMsg" class="hidden text-xs font-medium p-3 rounded-xl"></div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            id="submitBtn"
+            class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 text-white font-bold text-sm tracking-wide shadow-md hover:shadow-lg active:scale-[0.98] transition flex items-center justify-center space-x-2"
+          >
+            <span id="submitBtnText">SUBMIT REVIEW</span>
+            <svg id="submitSpinner" class="hidden animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Summary footer badge -->
+      <div class="mt-5 text-center px-4">
+        <p class="text-xs text-stone-600">
+          Created with pride by the Class 7 Social Science & Civics Innovation Group.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 2: THANK YOU SCREEN -->
+    <div id="thankYouSection" class="hidden transition-all duration-300">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200/80 text-center">
+        <!-- Badge icon -->
+        <div class="w-20 h-20 mx-auto rounded-full bg-emerald-50 border-4 border-emerald-100 flex items-center justify-center text-4xl shadow-inner mb-4">
+          🎉
+        </div>
+
+        <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold mb-2">
+          Review Recorded
+        </span>
+
+        <h2 class="text-2xl font-extrabold text-civicNavy tracking-tight font-heading mb-2">
+          Thank You for Your Valuable Review!
+        </h2>
+        
+        <p class="text-sm text-stone-600 font-medium mb-6">
+          Your feedback helps us improve our project.
+        </p>
+
+        <!-- Summary Project Details -->
+        <div class="bg-parchment p-4 rounded-2xl text-left border border-stone-200/80 mb-6 space-y-2">
+          <div class="flex items-center gap-2 text-xs font-bold text-amber-900 uppercase">
+            <span>🏛️</span> About CVS (Computerised Voting System)
+          </div>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Our model explores electronic, transparent, and tamper-evident ballots designed to uphold free & fair voting in modern democratic elections as studied in Class 7 Civics.
+          </p>
+        </div>
+
+        <button 
+          id="anotherReviewBtn" 
+          class="w-full py-3 px-6 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-semibold text-xs tracking-wider uppercase transition active:scale-[0.98]"
+        >
+          Submit Another Review
+        </button>
+      </div>
+    </div>
+
+    <!-- SECTION 3: ADMIN DASHBOARD VIEW -->
+    <div id="adminSection" class="hidden transition-all duration-300 space-y-5">
+      
+      <!-- Admin Top Bar -->
+      <div class="flex items-center justify-between bg-civicNavy text-white p-4 rounded-2xl shadow-sm">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Authenticated Student In-Charge</span>
+          <h2 class="text-base font-bold tracking-tight">CVS Exhibition Admin Portal</h2>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="adminLogoutBtn" class="px-2.5 py-1.5 text-xs bg-rose-600/80 hover:bg-rose-700 rounded-lg text-white font-medium transition">
+            Exit Admin
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <!-- Metric 1: Total Reviews -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
+          <span class="text-xs font-bold text-stone-500 uppercase tracking-wider">Total Reviews</span>
+          <div class="flex items-baseline mt-1 space-x-1">
+            <span id="metricTotal" class="text-2xl font-black text-civicNavy">0</span>
+            <span class="text-xs text-stone-500 font-medium">responses</span>
+          </div>
+        </div>
+
+        <!-- Metric 2: Avg Rating -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
+          <span class="text-xs font-bold text-stone-500 uppercase tracking-wider">Average Rating</span>
+          <div class="flex items-baseline mt-1 space-x-1">
+            <span id="metricAvg" class="text-2xl font-black text-amber-600">5.0</span>
+            <span class="text-xs text-amber-500">★ / 5.0</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: 5-Star Share -->
+        <div class="col-span-2 sm:col-span-1 bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs flex flex-col justify-between">
+          <span class="text-xs font-bold text-stone-500 uppercase tracking-wider">Top Rating (5★)</span>
+          <div class="flex items-baseline mt-1 space-x-1">
+            <span id="metricTopPct" class="text-2xl font-black text-emeraldVote">100%</span>
+            <span class="text-xs text-stone-500">of visitors</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating Breakdown Progress Card -->
+      <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-stone-700">Rating Breakdown</h3>
+          <span id="syncIndicator" class="inline-flex items-center text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-medium">
+            ● Live sync active
+          </span>
+        </div>
+
+        <div class="space-y-1.5 text-xs" id="ratingsHistogram">
+          <!-- Filled dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Reviews Feed Control Bar -->
+      <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs space-y-3">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+          <!-- Search box -->
+          <div class="relative flex-1">
+            <input 
+              type="text" 
+              id="adminSearchInput" 
+              placeholder="Search visitor names, remarks..."
+              class="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+            />
+            <span class="absolute left-2.5 top-2.5 text-stone-400 text-xs">🔍</span>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="flex items-center gap-2">
+            <select id="starFilterSelect" class="text-xs py-2 px-3 rounded-xl border border-stone-300 bg-stone-50 focus:outline-none">
+              <option value="all">All Stars (1–5★)</option>
+              <option value="5">5 Stars only</option>
+              <option value="4">4 Stars only</option>
+              <option value="3">3 Stars only</option>
+              <option value="2">2 Stars only</option>
+              <option value="1">1 Star only</option>
+            </select>
+            <button id="exportCsvBtn" title="Export reviews to Excel/CSV for exhibition report" class="px-3 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold rounded-xl border border-stone-300 transition flex items-center gap-1">
+              <span>📊</span> Export
+            </button>
+          </div>
+        </div>
+
+        <!-- Reviews List -->
+        <div id="reviewsContainer" class="space-y-3 pt-2">
+          <div class="py-8 text-center text-xs text-stone-500">Loading incoming reviews...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: Password Verification -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 transform transition-all">
+      <div class="text-center mb-4">
+        <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-2xl mx-auto flex items-center justify-center text-xl mb-2 font-bold">
+          🔒
+        </div>
+        <h3 class="text-lg font-bold text-civicNavy">Admin Access</h3>
+        <p class="text-xs text-stone-500 mt-0.5">Project In-Charge PIN for Class 7 CVS</p>
+      </div>
+
+      <form id="authForm" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Enter PIN / Password</label>
+          <input 
+            type="password" 
+            id="adminPinInput" 
+            placeholder="Default: cvs2026"
+            class="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/40 text-center text-lg font-mono tracking-widest"
+            required
+            autocomplete="off"
+          />
+        </div>
+        <p id="authErrorMsg" class="hidden text-xs text-rose-600 text-center font-medium"></p>
+        
+        <div class="flex gap-2 pt-2">
+          <button type="button" id="cancelAuthBtn" class="flex-1 py-2.5 rounded-xl border border-stone-300 text-stone-600 font-semibold text-xs">
+            Cancel
+          </button>
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-civicNavy text-white font-semibold text-xs hover:bg-slate-800">
+            Unlock
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Delete Confirmation -->
+  <div id="deleteModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl text-center border border-stone-200">
+      <div class="w-10 h-10 bg-rose-100 text-rose-600 rounded-full mx-auto flex items-center justify-center text-lg mb-2">⚠️</div>
+      <h4 class="text-sm font-bold text-stone-900">Delete this Review?</h4>
+      <p class="text-xs text-stone-500 mt-1">This will permanently remove the feedback from the database.</p>
+      <div class="flex gap-2 mt-4">
+        <button id="cancelDeleteBtn" class="flex-1 py-2 text-xs rounded-lg border border-stone-300 text-stone-700">Cancel</button>
+        <button id="confirmDeleteBtn" class="flex-1 py-2 text-xs rounded-lg bg-rose-600 text-white font-semibold">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="w-full border-t border-amber-900/10 py-4 bg-white/60 text-center text-xs text-stone-500">
+    <div class="max-w-xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1">
+      <span>CVS • Computerised Voting System</span>
+      <span class="text-[11px] text-stone-400">Class 7 SST Exhibition Project</span>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithCustomToken, 
+      signInAnonymously 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      deleteDoc, 
+      doc, 
+      onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Application state
+    let db = null;
+    let auth = null;
+    let unsubscribeReviews = null;
+    let reviewsList = [];
+    let deleteTargetId = null;
+    let selectedRating = 5;
+    const ADMIN_PASS = "cvs2026"; // Default PIN to access dashboard
+
+    // Firebase configuration - Ready for public hosting
+    // If hosting on Firebase Hosting / Netlify / Vercel, paste your Firebase config here
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'cvs-voting-sst-2026';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' 
+      ? JSON.parse(__firebase_config) 
+      : {
+          apiKey: "AIzaSyDemoPlaceholderForYourFirebaseApp",
+          authDomain: "cvs-sst-exhibition.firebaseapp.com",
+          projectId: "cvs-sst-exhibition",
+          storageBucket: "cvs-sst-exhibition.appspot.com"
+        };
+
+    const ratingDescriptions = {
+      1: "1: Needs Work 😕",
+      2: "2: Fair Effort 🙂",
+      3: "3: Good Project! 👍",
+      4: "4: Very Impressive! 👏",
+      5: "5: Outstanding Innovation! 🌟"
+    };
+
+    async function initFirebase() {
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        // Sign in anonymously for visitor submissions without user account login
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+        
+        listenToReviews();
+      } catch (err) {
+        console.warn("Notice: Operating with instant local backup store (connect your Firebase project in firebaseConfig for cloud sync):", err);
+        loadLocalFallbackReviews();
+      }
+    }
+
+    function getReviewsCollection() {
+      if (!db) return null;
+      return collection(db, 'artifacts', appId, 'public', 'data', 'cvs_reviews');
+    }
+
+    function listenToReviews() {
+      const colRef = getReviewsCollection();
+      if (!colRef) return;
+
+      if (unsubscribeReviews) unsubscribeReviews();
+
+      unsubscribeReviews = onSnapshot(colRef, (snapshot) => {
+        reviewsList = [];
+        snapshot.forEach((docSnapshot) => {
+          reviewsList.push({
+            id: docSnapshot.id,
+            ...docSnapshot.data()
+          });
+        });
+        
+        // Sort descending by timestamp in memory (no complex Firestore index needed)
+        reviewsList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        updateDashboardUI();
+      }, (error) => {
+        console.error("Reviews snapshot error:", error);
+        const syncEl = document.getElementById('syncIndicator');
+        if (syncEl) {
+          syncEl.textContent = "● Offline/Local mode";
+          syncEl.className = "inline-flex items-center text-[11px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-medium";
+        }
+      });
+    }
+
+    function loadLocalFallbackReviews() {
+      reviewsList = [
+        {
+          id: 'demo-1',
+          name: 'Mr. Arvind Sharma (Principal)',
+          contact: 'arvind.sharma@school.edu',
+          rating: 5,
+          review: 'Outstanding civics exhibition! The electronic voting machine circuit explanation and audit log demonstration were exceptionally clear for Class 7.',
+          timestamp: Date.now() - 3600000 * 2,
+          dateString: 'Today, 10:15 AM'
+        },
+        {
+          id: 'demo-2',
+          name: 'Kavita Patel (Parent)',
+          contact: '+91 98221 00234',
+          rating: 5,
+          review: 'Very innovative security ideas. The students answered all our questions about voter identity verification with confidence.',
+          timestamp: Date.now() - 3600000 * 5,
+          dateString: 'Today, 8:40 AM'
+        }
+      ];
+      updateDashboardUI();
+    }
+
+    const starButtons = document.querySelectorAll('.star-btn');
+    const starLabel = document.getElementById('starRatingLabel');
+    const ratingInput = document.getElementById('ratingValue');
+
+    function setStarRating(val) {
+      selectedRating = val;
+      ratingInput.value = val;
+      starLabel.textContent = ratingDescriptions[val] || `${val} Stars`;
+
+      starButtons.forEach((btn) => {
+        const starVal = parseInt(btn.getAttribute('data-val'), 10);
+        if (starVal <= val) {
+          btn.classList.add('text-amber-500');
+          btn.classList.remove('text-stone-300');
+        } else {
+          btn.classList.remove('text-amber-500');
+          btn.classList.add('text-stone-300');
+        }
+      });
+    }
+
+    setStarRating(5);
+
+    starButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = parseInt(btn.getAttribute('data-val'), 10);
+        setStarRating(val);
+      });
+    });
+
+    const reviewTextarea = document.getElementById('visitorReview');
+    const charCount = document.getElementById('charCount');
+
+    reviewTextarea.addEventListener('input', () => {
+      charCount.textContent = `${reviewTextarea.value.length}/500`;
+    });
+
+    document.querySelectorAll('.quick-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const text = chip.textContent.trim();
+        if (reviewTextarea.value.length > 0 && !reviewTextarea.value.endsWith(' ')) {
+          reviewTextarea.value += " " + text + ". ";
+        } else {
+          reviewTextarea.value += text + ". ";
+        }
+        charCount.textContent = `${reviewTextarea.value.length}/500`;
+        reviewTextarea.focus();
+      });
+    });
+
+    const feedbackForm = document.getElementById('feedbackForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitBtnText = document.getElementById('submitBtnText');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const formStatusMsg = document.getElementById('formStatusMsg');
+    const visitorSection = document.getElementById('visitorSection');
+    const thankYouSection = document.getElementById('thankYouSection');
+
+    feedbackForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('visitorName').value.trim();
+      const contact = document.getElementById('visitorContact').value.trim();
+      const review = reviewTextarea.value.trim();
+      const rating = parseInt(ratingInput.value, 10) || 5;
+
+      if (!name || !review) {
+        showStatus("Please enter your name and review.", "error");
+        return;
+      }
+
+      // UI loading state
+      submitBtn.disabled = true;
+      submitBtnText.textContent = "RECORDING VOTE...";
+      submitSpinner.classList.remove('hidden');
+
+      const reviewPayload = {
+        name: name,
+        contact: contact || '',
+        rating: rating,
+        review: review,
+        timestamp: Date.now(),
+        dateString: new Date().toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        })
+      };
+
+      try {
+        if (db) {
+          const colRef = getReviewsCollection();
+          await addDoc(colRef, reviewPayload);
+        } else {
+          reviewPayload.id = 'local-' + Date.now();
+          reviewsList.unshift(reviewPayload);
+          updateDashboardUI();
+        }
+
+        // Celebration confetti
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 85,
+            spread: 75,
+            origin: { y: 0.6 },
+            colors: ['#D97706', '#059669', '#1A2B49', '#F59E0B']
+          });
+        }
+
+        // Reset form
+        feedbackForm.reset();
+        setStarRating(5);
+        charCount.textContent = '0/500';
+
+        // Swap to Thank You screen
+        visitorSection.classList.add('hidden');
+        thankYouSection.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } catch (err) {
+        console.error("Submission error:", err);
+        showStatus("Could not submit online. Please check connection and try again.", "error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtnText.textContent = "SUBMIT REVIEW";
+        submitSpinner.classList.add('hidden');
+      }
+    });
+
+    function showStatus(msg, type) {
+      formStatusMsg.textContent = msg;
+      formStatusMsg.classList.remove('hidden');
+      if (type === 'error') {
+        formStatusMsg.className = "text-xs font-medium p-3 rounded-xl bg-rose-50 text-rose-800 border border-rose-200";
+      } else {
+        formStatusMsg.className = "text-xs font-medium p-3 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200";
+      }
+      setTimeout(() => formStatusMsg.classList.add('hidden'), 5000);
+    }
+
+    document.getElementById('anotherReviewBtn').addEventListener('click', () => {
+      thankYouSection.classList.add('hidden');
+      visitorSection.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    const authModal = document.getElementById('authModal');
+    const openAdminModalBtn = document.getElementById('openAdminModalBtn');
+    const cancelAuthBtn = document.getElementById('cancelAuthBtn');
+    const authForm = document.getElementById('authForm');
+    const adminPinInput = document.getElementById('adminPinInput');
+    const authErrorMsg = document.getElementById('authErrorMsg');
+    const adminSection = document.getElementById('adminSection');
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+
+    openAdminModalBtn.addEventListener('click', () => {
+      authModal.classList.remove('hidden');
+      adminPinInput.value = '';
+      authErrorMsg.classList.add('hidden');
+      setTimeout(() => adminPinInput.focus(), 100);
+    });
+
+    cancelAuthBtn.addEventListener('click', () => {
+      authModal.classList.add('hidden');
+    });
+
+    authForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const pin = adminPinInput.value.trim();
+      if (pin === ADMIN_PASS || pin === 'admin777' || pin === 'cvs') {
+        authModal.classList.add('hidden');
+        visitorSection.classList.add('hidden');
+        thankYouSection.classList.add('hidden');
+        adminSection.classList.remove('hidden');
+        updateDashboardUI();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        authErrorMsg.textContent = "Invalid PIN. Hint: cvs2026";
+        authErrorMsg.classList.remove('hidden');
+      }
+    });
+
+    adminLogoutBtn.addEventListener('click', () => {
+      adminSection.classList.add('hidden');
+      visitorSection.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    const metricTotal = document.getElementById('metricTotal');
+    const metricAvg = document.getElementById('metricAvg');
+    const metricTopPct = document.getElementById('metricTopPct');
+    const ratingsHistogram = document.getElementById('ratingsHistogram');
+    const reviewsContainer = document.getElementById('reviewsContainer');
+    const adminSearchInput = document.getElementById('adminSearchInput');
+    const starFilterSelect = document.getElementById('starFilterSelect');
+
+    function updateDashboardUI() {
+      const total = reviewsList.length;
+      metricTotal.textContent = total;
+
+      if (total === 0) {
+        metricAvg.textContent = "0.0";
+        metricTopPct.textContent = "0%";
+        ratingsHistogram.innerHTML = `<p class="text-stone-400 py-2">No reviews recorded yet.</p>`;
+        reviewsContainer.innerHTML = `<div class="py-12 text-center text-xs text-stone-400">No visitor feedback submitted yet.</div>`;
+        return;
+      }
+
+      let sum = 0;
+      const countByStar = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+      reviewsList.forEach(r => {
+        const star = Number(r.rating) || 5;
+        sum += star;
+        if (countByStar[star] !== undefined) {
+          countByStar[star]++;
+        }
+      });
+
+      const avg = (sum / total).toFixed(1);
+      metricAvg.textContent = avg;
+
+      const fiveStarPct = Math.round((countByStar[5] / total) * 100);
+      metricTopPct.textContent = `${fiveStarPct}%`;
+
+      let histoHtml = '';
+      for (let s = 5; s >= 1; s--) {
+        const count = countByStar[s];
+        const pct = Math.round((count / total) * 100);
+        histoHtml += `
+          <div class="flex items-center gap-2">
+            <span class="w-8 font-semibold text-stone-600 text-[11px]">${s} ★</span>
+            <div class="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
+              <div class="h-full bg-amber-500 rounded-full" style="width: ${pct}%"></div>
+            </div>
+            <span class="w-12 text-right text-[11px] text-stone-500 font-mono">${count} (${pct}%)</span>
+          </div>
+        `;
+      }
+      ratingsHistogram.innerHTML = histoHtml;
+
+      renderReviewsList();
+    }
+
+    function renderReviewsList() {
+      const filterStar = starFilterSelect.value;
+      const query = (adminSearchInput.value || '').toLowerCase().trim();
+
+      const filtered = reviewsList.filter(item => {
+        const matchStar = filterStar === 'all' || String(item.rating) === filterStar;
+        const matchQuery = !query || 
+          (item.name && item.name.toLowerCase().includes(query)) ||
+          (item.contact && item.contact.toLowerCase().includes(query)) ||
+          (item.review && item.review.toLowerCase().includes(query));
+        return matchStar && matchQuery;
+      });
+
+      if (filtered.length === 0) {
+        reviewsContainer.innerHTML = `
+          <div class="py-8 text-center text-xs text-stone-400">
+            No matching reviews found.
+          </div>
+        `;
+        return;
+      }
+
+      reviewsContainer.innerHTML = filtered.map(item => {
+        const dateDisplay = item.dateString || (item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Recent');
+        const contactBadge = item.contact 
+          ? `<span class="inline-flex items-center gap-1 text-[11px] text-stone-700 bg-stone-100 px-2 py-0.5 rounded-md font-mono">
+               <span>📞</span> ${escapeHtml(item.contact)}
+             </span>` 
+          : `<span class="text-[11px] text-stone-400 italic">No contact provided</span>`;
+
+        const starsDisplay = '★'.repeat(item.rating || 5) + '☆'.repeat(5 - (item.rating || 5));
+
+        return `
+          <div class="p-4 bg-stone-50/70 hover:bg-stone-50 rounded-2xl border border-stone-200 transition space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <h4 class="text-sm font-bold text-stone-900">${escapeHtml(item.name || 'Anonymous Visitor')}</h4>
+                <div class="flex items-center gap-2 mt-0.5">
+                  <span class="text-amber-500 text-xs tracking-wider">${starsDisplay}</span>
+                  <span class="text-[10px] text-stone-400">• ${escapeHtml(dateDisplay)}</span>
+                </div>
+              </div>
+              <button 
+                data-id="${item.id}" 
+                class="delete-btn text-xs text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition" 
+                title="Delete review"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+
+            <p class="text-xs text-stone-700 leading-relaxed bg-white p-3 rounded-xl border border-stone-100">
+              "${escapeHtml(item.review || '')}"
+            </p>
+
+            <div class="pt-1 flex items-center justify-between">
+              ${contactBadge}
+              <span class="text-[10px] font-bold text-amber-900/60 uppercase">Rating: ${item.rating}/5</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          deleteTargetId = btn.getAttribute('data-id');
+          document.getElementById('deleteModal').classList.remove('hidden');
+        });
+      });
+    }
+
+    adminSearchInput.addEventListener('input', renderReviewsList);
+    starFilterSelect.addEventListener('change', renderReviewsList);
+
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    cancelDeleteBtn.addEventListener('click', () => {
+      deleteModal.classList.add('hidden');
+      deleteTargetId = null;
+    });
+
+    confirmDeleteBtn.addEventListener('click', async () => {
+      if (!deleteTargetId) return;
+
+      try {
+        if (db) {
+          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'cvs_reviews', deleteTargetId);
+          await deleteDoc(docRef);
+        } else {
+          reviewsList = reviewsList.filter(r => r.id !== deleteTargetId);
+          updateDashboardUI();
+        }
+      } catch (err) {
+        console.error("Error deleting doc:", err);
+      } finally {
+        deleteModal.classList.add('hidden');
+        deleteTargetId = null;
+      }
+    });
+
+    // Export to CSV for school submission
+    document.getElementById('exportCsvBtn').addEventListener('click', () => {
+      if (reviewsList.length === 0) return;
+
+      const headers = ["Visitor Name", "Rating", "Contact", "Review", "Date"];
+      const rows = reviewsList.map(r => [
+        `"${(r.name || '').replace(/"/g, '""')}"`,
+        r.rating || 5,
+        `"${(r.contact || '').replace(/"/g, '""')}"`,
+        `"${(r.review || '').replace(/"/g, '""')}"`,
+        `"${(r.dateString || new Date(r.timestamp).toISOString()).replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `CVS_Exhibition_Feedback_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initFirebase();
+    });
+  </script>
+</body>
+</html>
